@@ -34,7 +34,9 @@ public class TasksService {
             scheduledThreadPoolExecutor.schedule(
                     getNotificationRunnable(task), secondsDelay, TimeUnit.SECONDS
             );
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Scheduled notification of task " + task);
         }
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "skipping notification of task " + task);
     }
 
     private Runnable getNotificationRunnable(Task task) {
@@ -42,6 +44,12 @@ public class TasksService {
             // TODO: make email notifications
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Notifying of task " + task);
         };
+    }
+
+    public TasksService() {
+        for (Task task : getAllTasks()) {
+            tryScheduleNotification(task);
+        }
     }
 
 }
