@@ -2,18 +2,18 @@ window.onload = async function () {
     const response = await fetch("/api/tasks", {
             method: "GET",
             headers: { "Accept": "application/json", "Content-Type": "application/json" }
-        });
+    });
 
-        console.log(response);
-        console.log(response.ok);
-        if (response.ok === true) {
-            let tasks = await response.json();
-            console.log(tasks);
+    console.log(response);
+    console.log(response.ok);
+    if (response.ok === true) {
+        let tasks = await response.json();
+        console.log(tasks);
 
-            for (let task of tasks) {
-                append_table_list(task);
-            }
+        for (let task of tasks) {
+            append_table_list(task);
         }
+    }
 }
 
 function append_table_list(task) {

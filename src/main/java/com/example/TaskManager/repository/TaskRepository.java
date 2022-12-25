@@ -34,6 +34,14 @@ public class TaskRepository {
         session.close();
     }
 
+    public void updateTask(Task task) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.merge(task);
+        transaction.commit();
+        session.close();
+    }
+
     public void removeTask(Task task) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();

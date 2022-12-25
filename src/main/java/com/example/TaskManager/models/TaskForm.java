@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TaskForm {
+    private Long id;
     private String time;
     private String name;
     private String description;
@@ -29,13 +30,21 @@ public class TaskForm {
         this.description = description;
     }
 
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
     public TaskForm() {
 
     }
 
     public Task toTask() {
         LocalDateTime parsedTime = LocalDateTime.parse(time, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        return new Task(parsedTime, name, description);
+        return new Task(id, parsedTime, name, description);
     }
 
     @Override

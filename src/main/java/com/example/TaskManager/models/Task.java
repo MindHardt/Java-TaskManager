@@ -11,7 +11,7 @@ public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id = 0L;
     private LocalDateTime time;
     private String name;
     private String description;
@@ -37,7 +37,12 @@ public class Task {
         this.description = description;
     }
 
-    public Task(LocalDateTime time, String name, String description) {
+    public long getId() {
+        return id;
+    }
+
+    public Task(long id, LocalDateTime time, String name, String description) {
+        this.id = id;
         this.time = time;
         this.name = name;
         this.description = description;
@@ -46,6 +51,7 @@ public class Task {
 
     public TaskForm toForm() {
         TaskForm form = new TaskForm();
+        form.setId(id);
         form.setName(name);
         form.setDescription(description);
         form.setTime(time.toString());

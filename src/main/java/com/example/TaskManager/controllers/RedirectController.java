@@ -14,4 +14,9 @@ public class RedirectController {
     public String add() {
         return "add-task";
     }
+
+    @GetMapping("/update")
+    public String edit() {
+        return "update-tasks";
+    }
 }

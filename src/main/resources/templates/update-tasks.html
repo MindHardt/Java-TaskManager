@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменение события</title>
+    <script src="update-tasks.js"></script>
+</head>
+<body>
+    <select id="tasks-list" onchange="choose_select(this)">
+        <option selected disabled hidden>Выберите событие которое хотите изменить</option>
+    </select>
+    <br>
+    <form method="post" action="/api/tasks/update">
+        <input type="text" id="id" name="task-id" hidden>
+        <input type="text" placeholder="Название дела" id="name" name="task-name">
+        <input type="text" placeholder="Описание" id="description" name="task-description">
+        <input type="datetime-local" id="time" name="task-time"><br>
+        <input type="checkbox" id="delete" name="task-delete"> удалить?
+        <br>
+        <button type=submit>Обновить</button>
+    </form>
+    <button type="button" onclick="window.location.href = '/'">⬅</button>
+</body>
+</html>
