@@ -33,4 +33,12 @@ public class TaskRepository {
         transaction.commit();
         session.close();
     }
+
+    public void removeTask(Task task) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.remove(task);
+        transaction.commit();
+        session.close();
+    }
 }

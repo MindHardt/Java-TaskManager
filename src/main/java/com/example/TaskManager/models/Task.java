@@ -42,12 +42,21 @@ public class Task {
         this.name = name;
         this.description = description;
     }
+    public Task () { }
+
+    public TaskForm toForm() {
+        TaskForm form = new TaskForm();
+        form.setName(name);
+        form.setDescription(description);
+        form.setTime(time.toString());
+        return form;
+    }
 
     @Override
     public String toString() {
         return
                 id +
-                " [ " + time.toString() + " ]" +
+                " [ " + time + " ]" +
                 " <" + name + ">: " +
                 description;
     }

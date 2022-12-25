@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ADD TASK</title>
+    <title>Добавить событие</title>
+    <script src="add-task.js"></script>
 </head>
 <body>
-
+<form method="post" action="/api/tasks">
+    <input type="text" placeholder="Название дела" id="name" name="task-name">
+    <input type="text" placeholder="Описание" id="description" name="task-description">
+    <input type="datetime-local" id="time" name="task-time">
+    <button type=submit>Добавить</button>
+</form>
+<button type="button" onclick="window.location.href = '/'">⬅</button>
 </body>
 </html>
