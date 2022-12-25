@@ -1,4 +1,4 @@
-package com.example.TaskManager;
+package com.example.TaskManager.repository;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
