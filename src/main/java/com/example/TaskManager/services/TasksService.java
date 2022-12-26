@@ -45,19 +45,21 @@ public class TasksService {
         taskRepository.removeTask(task);
     }
 
-    private void tryScheduleNotification(Task task, boolean notifyBadInstantly) {
+    private void tryScheduleNotification(Task task, boolean isNewTask) {
         long secondsDelay = SECONDS.between(LocalDateTime.now(), task.getTime());
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, task + " is " + secondsDelay + " seconds in future");
-        if (secondsDelay > 3600) {
+        int minDelay = isNewTask ? 0 : 3600;
+        if (secondsDelay > minDelay) {
+            long actualDelay = isNewTask
+                    ? secondsDelay < 3600 ? 0 : secondsDelay
+                    : secondsDelay - 3600;
+
             scheduledThreadPoolExecutor.schedule(
-                    getNotificationRunnable(task), secondsDelay + 3600, TimeUnit.SECONDS
+                    getNotificationRunnable(task), actualDelay, TimeUnit.SECONDS
             );
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Scheduled notification of task " + task);
         }
         else {
-            if (notifyBadInstantly) {
-                emailNotify(task);
-            }
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Skipping notification of task " + task);
         }
     }
@@ -68,7 +70,7 @@ public class TasksService {
             Task checkedTask = taskRepository.getTaskById(task.getId());
             if (checkedTask != null) {
                 emailNotify(checkedTask);
-                Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Notifying of task " + task);
+                Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Notified of task " + task);
             }
             else {
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Task " + task + " no longer exists");
