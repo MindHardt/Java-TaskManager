@@ -4,10 +4,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class HibernateUtil {
     private static SessionFactory sessionFactory;
-    
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();

@@ -2,9 +2,10 @@ package com.example.TaskManager.services;
 
 import com.example.TaskManager.models.Task;
 import com.example.TaskManager.repository.TaskRepository;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -16,39 +17,47 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Service
 public class TasksService {
+    private final TaskRepository taskRepository;
+    private final JavaMailSender mailSender;
+
     ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+
     public List<Task> getAllTasks() {
-        return TaskRepository.TASK_REPOSITORY.getAllTasks();
+        return taskRepository.getAllTasks();
     }
     public void addTask(Task task) {
-        TaskRepository.TASK_REPOSITORY.addTask(task);
+        taskRepository.addTask(task);
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Adding task " + task);
-        tryScheduleNotification(task);
+        tryScheduleNotification(task, true);
     }
 
     public void updateTask(Task task) {
-        TaskRepository.TASK_REPOSITORY.updateTask(task);
+        taskRepository.updateTask(task);
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Updating new task " + task);
-        tryScheduleNotification(task);
+        tryScheduleNotification(task, true);
     }
 
     public Task getTask(Long id) {
-        return TaskRepository.TASK_REPOSITORY.getTaskById(id);
+        return taskRepository.getTaskById(id);
     }
 
     public void removeTask(Task task) {
-        TaskRepository.TASK_REPOSITORY.removeTask(task);
+        taskRepository.removeTask(task);
     }
 
-    private void tryScheduleNotification(Task task) {
-        long secondsDelay = SECONDS.between(LocalDateTime.now().plus(Duration.ofHours(1)), task.getTime());
-        if (secondsDelay > 0) {
+    private void tryScheduleNotification(Task task, boolean notifyBadInstantly) {
+        long secondsDelay = SECONDS.between(LocalDateTime.now(), task.getTime());
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, task + " is " + secondsDelay + " seconds in future");
+        if (secondsDelay > 3600) {
             scheduledThreadPoolExecutor.schedule(
-                    getNotificationRunnable(task), secondsDelay, TimeUnit.SECONDS
+                    getNotificationRunnable(task), secondsDelay + 3600, TimeUnit.SECONDS
             );
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Scheduled notification of task " + task);
         }
         else {
+            if (notifyBadInstantly) {
+                emailNotify(task);
+            }
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Skipping notification of task " + task);
         }
     }
@@ -56,9 +65,9 @@ public class TasksService {
     private Runnable getNotificationRunnable(Task task) {
         return () -> {
             // Checking if task still exists
-            Task checkedTask = TaskRepository.TASK_REPOSITORY.getTaskById(task.getId());
+            Task checkedTask = taskRepository.getTaskById(task.getId());
             if (checkedTask != null) {
-                // TODO: make email notifications
+                emailNotify(checkedTask);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Notifying of task " + task);
             }
             else {
@@ -67,9 +76,21 @@ public class TasksService {
         };
     }
 
-    public TasksService() {
+    private void emailNotify(Task task) {
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Email notifying " + task);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("Mindhardt@yandex.ru");
+        message.setTo("Mindhardt@yandex.ru");
+        message.setText(task.toString());
+        message.setSubject("Task notification " + task.getName());
+        mailSender.send(message);
+    }
+
+    public TasksService(TaskRepository taskRepository, JavaMailSender mailSender) {
+        this.taskRepository = taskRepository;
+        this.mailSender = mailSender;
         for (Task task : getAllTasks()) {
-            tryScheduleNotification(task);
+            tryScheduleNotification(task, false);
         }
     }
 

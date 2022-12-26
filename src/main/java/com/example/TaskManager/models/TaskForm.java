@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TaskForm {
-    private Long id;
+    private long id;
     private String time;
     private String name;
     private String description;
@@ -30,10 +30,10 @@ public class TaskForm {
         this.description = description;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
